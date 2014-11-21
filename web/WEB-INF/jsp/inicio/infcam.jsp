@@ -17,6 +17,13 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.responsive.css" media="all">
         <link href="${pageContext.request.contextPath}/resources/css/style.ie7.css" rel="stylesheet">
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/resources/images/favicon.ico"/>
+        <script language="JavaScript"> 
+            if(window.screen.availWidth == 1280)window.parent.document.body.style.zoom="120%" 
+            if(window.screen.availWidth == 1152)window.parent.document.body.style.zoom="108%" 
+            if(window.screen.availWidth == 1024)window.parent.document.body.style.zoom="96%" 
+            if(window.screen.availWidth == 800)window.parent.document.body.style.zoom="75%"; 
+            if(window.screen.availWidth == 640)window.parent.document.body.style.zoom="60%" 
+        </script> 
        
     </head>    
     <body>

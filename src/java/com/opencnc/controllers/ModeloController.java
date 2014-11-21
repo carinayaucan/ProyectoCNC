@@ -241,10 +241,11 @@ public class ModeloController {
                                             @RequestParam float puntoCeroMaquinaX,@RequestParam float puntoCeroMaquinaY,
                                             @RequestParam float piezaAncho,@RequestParam float piezaLargo
                                             )throws Exception{
+        //Mensaje (logger) de informacion en consola para redireccionar la vista nuevoguardarModelo
        logger.info("Ingrese se guardara los datos del modelo");
                 
               try{
-            //utilizar para guardar los datos del modelo
+            //utilizar para guardar los datos modificados del modelo
             Session s = HibernateUtil.getSessionFactory().openSession();
             Criteria c = s.createCriteria(Modelo.class);
            c.add(Restrictions.eq("modeloId", modeloId));
@@ -255,23 +256,26 @@ public class ModeloController {
                
                
                 Modelo mol = l.get(0);
+                //para obtener la fecha actual
                 Calendar cl = new GregorianCalendar();
                 Date d1 = cl.getTime();
             
-                mol.setModificadoFecha(d1);
-                mol.setNombre(nombre);
-                mol.setDescripcion(descripcion);
-                mol.setPuntoCeroMaquinaX(puntoCeroMaquinaX);
-                mol.setPuntoCeroMaquinaY(puntoCeroMaquinaY);
-                mol.setPiezaAncho(piezaAncho);
-                mol.setPiezaLargo(piezaLargo);
-                  
+                mol.setModificadoFecha(d1);//se le asigna la fecha actual 
+                //Se guardan los datos modificados
+                mol.setNombre(nombre);//nombre del modelo
+                mol.setDescripcion(descripcion);//descripcion del modelo
+                mol.setPuntoCeroMaquinaX(puntoCeroMaquinaX);//punto cero de maquina en X
+                mol.setPuntoCeroMaquinaY(puntoCeroMaquinaY);//punto cero de maquina en Y
+                mol.setPiezaAncho(piezaAncho);//ancho del modelo
+                mol.setPiezaLargo(piezaLargo);//largo del modelo
+                 
+                //metodo para guardar los datos 
                 Transaction t = s.getTransaction();
                 s.beginTransaction();
                 s.saveOrUpdate(mol);
                 t.commit();
              
-                System.out.println("se modifico los datos del modelo");
+                System.out.println("se modifico los datos del modelo");//mensaje de informacion en consola 
                 return new ModelAndView("redirect:/modelo/abrir.htm");
               
             }             
@@ -302,6 +306,7 @@ public class ModeloController {
                                             HttpServletResponse response
                                             )throws Exception{
          try{
+        //mensaje de informacion
         logger.info("Se modificara el modelo");
         HttpSession sess =  request.getSession();
         if (sess != null){

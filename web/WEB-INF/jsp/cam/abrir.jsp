@@ -13,6 +13,7 @@
     <title>openCut</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width">
+    
   </head>
   <body>
     <a href="../resources/cuter/index.html" target="_parent">CAM</a>

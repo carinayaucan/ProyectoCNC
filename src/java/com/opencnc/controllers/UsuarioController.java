@@ -29,7 +29,6 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -55,9 +54,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class UsuarioController {
     // Implemento Log4j para eventos tipo log
     private static final Logger logger = Logger.getLogger(UsuarioController.class.getName());
+                    //declaracion de variables para calcular la fecha
                     Date fechaInicio = null;
                     Date fechaLlegada = null;
-                   
+                 //configuracion para verificar la fecha  
                 Calendar calendario = Calendar.getInstance();
                 Calendar fechaenvio=Calendar.getInstance();
                 Calendar fecha24horas = Calendar.getInstance();
@@ -66,14 +66,14 @@ public class UsuarioController {
                 final String password="epncepra";//clave del correo 
                 String mensaje = "";
            
-            
+            //Configuracion del servidor de correo
                 Properties props= new Properties();
-//           
-
+                
+            //para enviar el correo 
             javax.mail.Session session=javax.mail.Session.getInstance(props,new javax.mail.Authenticator() {
                          protected PasswordAuthentication
                                  getPasswordAuthentication(){
-                                     return new PasswordAuthentication(username,password);
+                                     return new PasswordAuthentication(username,password);//autentifica tanto el correo como la contraseña
                                  }       
             });
 //******************************************************************************
@@ -142,20 +142,18 @@ public ModelAndView crear ()throws IOException{
         
         ModelAndView m = new ModelAndView("/usuario/crear");
         m.addObject("usuario",u);
-        
+        //Mensaje (logger) de informacion en consola
         logger.info("Empieza a crear un nuevo usuario");
         return m;
         
         }catch(NumberFormatException  ex){
+            //Mensaje (logger) de error se muestra en consola
             logger.error("Error...Ingrese sus datos"+ex);
             //Redirecciona para enviar a la pagina de error
             return new ModelAndView("redirect:/error/abrir_error.htm");   
         }
         //return null;
     }
-
-
-
 
 /**
  * *****************************************************************************
@@ -176,10 +174,12 @@ public ModelAndView crear ()throws IOException{
                                             throws Exception{
         
            
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable","true");
-            props.put("mail.smtp.host","smtp.gmail.com");
-            props.put("mail.smtp.port", 587);
+             //propiedades de la conexion-configuracion del servidor del correo
+            props.put("mail.smtp.auth", "true");//autentificacionsi requiere o no usuario y password para conectarse
+            props.put("mail.smtp.starttls.enable","true");//iniciar el servidor(si esta disponible)
+            props.put("mail.smtp.host","smtp.gmail.com");//Nombre del host de correo, es smtp.gmail.com
+            props.put("mail.smtp.port", 587);//Puerto de gmail para envio de correos
+        
 
                   
         byte[] clave = usuario.getClave();
@@ -215,13 +215,13 @@ public ModelAndView crear ()throws IOException{
             t.commit();
             
             //mensaje de bienvenida al sistema
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress("cepravii@gmail.com"));
-                message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(email));//
+                Message message = new MimeMessage(session);//se crea un objeto donde ira la estructura del correo
+                message.setFrom(new InternetAddress("cepravii@gmail.com"));//se agrega el corrreo origen
+                message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(email));//correo destinario
                 message.setSubject("Bienvenido OpenCNC");//el asunto del correo 
-                mensaje = mensaje.concat(usuario.getNombre());
+                mensaje = mensaje.concat("Bienvenido a la Plataforma Virtual OpenCNC"+" "+ usuario.getNombre());//cuerpo del mensaje
                 message.setText(mensaje);// mensaje 
-                Transport.send(message); 
+                Transport.send(message); //envia el mensaje
                 System.out.println("mensaje enviado");   
             
         }else{
@@ -362,6 +362,7 @@ public ModelAndView crear ()throws IOException{
                                                 HttpServletRequest request, 
                                                 HttpServletResponse response)
                                                 throws IOException{
+        //Mensaje(logger) de informacion que se muestra al redicreccionar la vista borrar usuario
         logger.info("Se eliminara al usuario");
         HttpSession sess =  request.getSession();
         if (sess != null){
@@ -397,7 +398,7 @@ public ModelAndView crear ()throws IOException{
     public ModelAndView login ()throws IOException{
        
         try{
-            
+          //Mensaje(logger) de informacion en consola al redireccionar la vista de login
         logger.info("Ingrese sus datos del login"); 
         Usuario u = new Usuario();
         
@@ -473,7 +474,7 @@ public ModelAndView crear ()throws IOException{
           HttpSession ses =  request.getSession();
           ses.setAttribute("usuario", ul);
           request.setAttribute("usuario", ul);
-          //
+          //Mensaje (logger) de informacion que se muestra en consola
           logger.info("A ingresado al sistema con el siguiente usuario "+ul.getNombre()); 
           ul.setEstado("A");
           Transaction t = s.getTransaction();
@@ -507,52 +508,50 @@ public ModelAndView crear ()throws IOException{
                     System.out.println("Le quedan "+ diffHoras+" horas "+restominutos+ " minutos para cambiar la contraseña");
                    if(diffHoras<=5)
                     {
-                        props.put("mail.smtp.auth", "true");
-                        props.put("mail.smtp.starttls.enable","true");
-                        props.put("mail.smtp.host","smtp.gmail.com");
-                        props.put("mail.smtp.port", 587);
+                        //propiedades de la conexion-configuracion del servidor del correo
+                        props.put("mail.smtp.auth", "true");//autentificacionsi requiere o no usuario y password para conectarse
+                        props.put("mail.smtp.starttls.enable","true");//iniciar el servidor(si esta disponible)
+                        props.put("mail.smtp.host","smtp.gmail.com");//Nombre del host de correo, es smtp.gmail.com
+                        props.put("mail.smtp.port", 587);//Puerto de gmail para envio de correos
+        
                         
-                        Message message = new MimeMessage(session);
-                        message.setFrom(new InternetAddress("cepravii@gmail.com"));
-                        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(ul.getEmail()));
+                        Message message = new MimeMessage(session);//se crea un objeto donde ira la estructura del correo
+                        message.setFrom(new InternetAddress("cepravii@gmail.com"));//se agrega el correo origen
+                        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(ul.getEmail()));//correo destinatario
                         message.setSubject("Informacion OpenCNC");//asunto del mensaje
-                        message.setText("Estimad@ "+ ul.getNombre() + " : Le quedan "+ diffHoras+" horas "+restominutos+ " minutos para cambiar la contraseña");
-                        Transport.send(message); 
+                        message.setText("Estimad@ "+ ul.getNombre() + " : Le quedan "+ diffHoras+" horas "+restominutos+ " minutos para cambiar la contraseña");//cuerpo del mensaje
+                        Transport.send(message); //envia el mensaje
                         System.out.println("la fecha que se envio el msm es: "+fechaInicio);
                         System.out.println("mensaje enviado");
                     }
                     
                     }
                     else{
-                        props.put("mail.smtp.auth", "true");
-                        props.put("mail.smtp.starttls.enable","true");
-                        props.put("mail.smtp.host","smtp.gmail.com");
-                        props.put("mail.smtp.port", 587);
+                         //propiedades de la conexion-configuracion del servidor del correo
+                        props.put("mail.smtp.auth", "true");//autentificacionsi requiere o no usuario y password para conectarse
+                        props.put("mail.smtp.starttls.enable","true");//iniciar el servidor(si esta disponible)
+                        props.put("mail.smtp.host","smtp.gmail.com");//Nombre del host de correo, es smtp.gmail.com
+                        props.put("mail.smtp.port", 587);//Puerto de gmail para envio de correos
+        
                         
-                        Message message = new MimeMessage(session);
-                        message.setFrom(new InternetAddress("cepravii@gmail.com"));
-                        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(ul.getEmail()));
+                        //enviar mensaje de Caducacion de la Contraseña Temporal al correo electronico
+                        Message message = new MimeMessage(session);//se crea un objeto donde ira la estructura del correo
+                        message.setFrom(new InternetAddress("cepravii@gmail.com"));//se agrega el correo origen 
+                        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(ul.getEmail()));//corre destinatario(usuario)
                         message.setSubject("Caduco Contraseña de OpenCNC");//asunto del mensaje
-                        message.setText("Estimad@ "+ ul.getNombre() +" : Caduco su Contraseña temporal.");
-                        Transport.send(message); 
-                        System.out.println("la fecha que se envio el msm es: "+fechaInicio);
-                        System.out.println("mensaje enviado");
-                        
+                        message.setText("Estimad@ "+ ul.getNombre() +" : Caduco su Contraseña temporal.");//cuerpo del mensaje
+                        Transport.send(message); //envia el mensaje
+                       
+                        //redireccionamiento de la pagina 
                         return new ModelAndView("redirect:/usuario/cambiarContrasena.htm");
-//                        ModelAndView m1 = new ModelAndView("redirect:/usuario/cambiarContrasena.htm");
-//                        ArrayList listaError = new ArrayList( ) ;
-//                        listaError.add("Caduco su Contraseña Temporal Asignada por el Sistema por favor Cambie su Contraseña");
-//                        m1.addObject("errorId",listaError);
-//                        return m1;
-                        
+//                                             
                     }
             }      
           try {
-              //return lista(request);
-              //return new ModelAndView("redirect:/modelo/crearModelo.htm");
-              //return  crearModelo(request);
+              
               return ModeloController.crearModelo(request, response);
           } catch (Exception ex) {
+              //Mensaje(error) de error que se muestra en consola
               logger.error("Error... por favor inicie sus datos");
               java.util.logging.Logger.getLogger(UsuarioController.class.getName()).log(Level.SEVERE, null, ex);
           }
@@ -581,6 +580,7 @@ public ModelAndView crear ()throws IOException{
                                             HttpServletResponse response)
                                             throws IOException{
       try {
+          //Mensaje (logger) de informacion al redireccionar la vista Cambiar Contraseña en consola
         logger.info("Ingrese la nueva contraseña.");
         HttpSession sess =  request.getSession();
         if (sess != null){
@@ -592,15 +592,13 @@ public ModelAndView crear ()throws IOException{
             return new ModelAndView("redirect:/usuario/login.htm");
         }
          } catch (Exception e) {
+             //Mensaje(logger) de error envia un mensaje de error en consola
               logger.error("Se produjo un error al cambiar la contraseña",e);
           }
           return null;
     }
     
-   
-    
-    
-    
+ 
  /**
   ******************************************************************************
  * Nueva Contraseña
@@ -614,27 +612,28 @@ public ModelAndView crear ()throws IOException{
     public ModelAndView  nuevaContrasena (@RequestParam String mail,
                                             @RequestParam String nuevaContrasena)   
                                     throws IOException{
-        
+        //Mensaje(logger) de informacion en consola al redireccionar la vista nuevaContraseña
         logger.info("Ingrese su e-mail para cambiar la contraseña");
                 
             try{
             //utilizar para cambiar la contraseña
             Session s = HibernateUtil.getSessionFactory().openSession();
             Criteria c = s.createCriteria(Usuario.class);
-            c.add(Restrictions.eq("email", mail));
+            c.add(Restrictions.eq("email", mail));//busca el email 
             List<Usuario> l = c.list();
             if(l.isEmpty()){
                 return new ModelAndView("redirect:/error/abrir_error.htm");
             }else{
                
-                String clave_prov = nuevaContrasena;
-                byte[] clave = clave_prov.getBytes();
-                EncryptController enc = new EncryptController();
+                String clave_prov = nuevaContrasena;//se le asigna la nueva contraseña a una variable
+                byte[] clave = clave_prov.getBytes();//la contraseña se transforma de string a byte
+                EncryptController enc = new EncryptController();//se encripta la contraseña 
                 Usuario us = l.get(0);
-                us.setClave(enc.encriptado(clave));
+                us.setClave(enc.encriptado(clave));//se asigna la clave encriptada
                 us.setModificadoPor(0);//modificado la contrasena por el usuario
                 Calendar fecha = Calendar.getInstance();
                 us.setModificadoFecha(fecha.getTime());//se guarda la fecha actual de modificacion
+                //se envia los datos y se guardan 
                 Transaction t = s.getTransaction();
                 s.beginTransaction();
                 s.saveOrUpdate(us);
@@ -671,7 +670,7 @@ public ModelAndView crear ()throws IOException{
  * *****************************************************************************
  * Envia mail con contraseña.
  * *****************************************************************************
-     * @param tipoMaquinaId
+ * @param enviarMail
  * @return
  * @throws IOException 
  */
@@ -679,24 +678,18 @@ public ModelAndView crear ()throws IOException{
     public ModelAndView  enviarMail (
                                     @RequestParam String enviarMail)
                                     throws IOException, MessagingException{
+        //Mensaje(logger) de informacion que se muestra al redireccionar la vista de enviar email en consola
         logger.info("Ingrese su e-mail para enviarle la contraseña");
                 
-        final String username="cepravii@gmail.com";//correo de la empresa
-        final String password="epncepra";//clave del correo 
+         //propiedades de la conexion-configuracion del servidor del correo
+        props.put("mail.smtp.auth", "true");//autentificacionsi requiere o no usuario y password para conectarse
+        props.put("mail.smtp.starttls.enable","true");//iniciar el servidor(si esta disponible)
+        props.put("mail.smtp.host","smtp.gmail.com");//Nombre del host de correo, es smtp.gmail.com
+        props.put("mail.smtp.port", 587);//Puerto de gmail para envio de correos
         
-        Properties props= new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable","true");
-        props.put("mail.smtp.host","smtp.gmail.com");
-        props.put("mail.smtp.port", 587);
-        
-            javax.mail.Session session=javax.mail.Session.getInstance(props,new javax.mail.Authenticator() {
-                protected PasswordAuthentication
-                        getPasswordAuthentication(){
-                            return new PasswordAuthentication(username,password);
-                        }       
-            });
+
         try{
+            //prepara la sesion
             Session s = HibernateUtil.getSessionFactory().openSession();
             Criteria c = s.createCriteria(Usuario.class);
 //            Criteria c1=s.createCriteria(Rol.class);
@@ -709,7 +702,7 @@ public ModelAndView crear ()throws IOException{
                  //diferentes claves para cada usuario
                 Random rand = new Random();
                 int x = rand.nextInt(100000);
-                String clave_prov = "cepra"+Integer.toString(x);//creacion de una clave
+                String clave_prov = "cepra"+Integer.toString(x);//creacion de una clave aleatoria
                 byte[] clave = clave_prov.getBytes();
                 EncryptController enc = new EncryptController();
                 Usuario us = l.get(0);
@@ -717,18 +710,18 @@ public ModelAndView crear ()throws IOException{
                 fechaInicio=calendario.getTime();//guarda la fecha actual en la qu envia el msm
                 us.setModificadoFecha(fechaInicio);//asigna la fecha actual al usuario
                 us.setModificadoPor(1);//modificado la contraseña por el sistema
-                
+                //envio de datos y guardar
                 Transaction t = s.getTransaction();
                 s.beginTransaction();
                 s.saveOrUpdate(us);
                 t.commit();
                 
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress("cepravii@gmail.com"));
-                message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(enviarMail));
-                message.setSubject("Clave temporal OpenCNC");
-                message.setText("Se ha pedido recuperar la contraseña para el usuario: " +us.getNombre()+ ", durante las próximas 24 horas usted puede usar el siguiente código de ingreso: "+clave_prov+  " ; y reestablecer su contraseña. No olvide que en caso de expirar su código, Usted puede volver a solicitar un código de ingreso.");
-                Transport.send(message); 
+                Message message = new MimeMessage(session);//se crea un objeto donde ira la estructura del correo
+                message.setFrom(new InternetAddress("cepravii@gmail.com"));//se agrega el correo de origen
+                message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(enviarMail));//correo destinatario
+                message.setSubject("Clave temporal OpenCNC");//asunto del mensaje
+                message.setText("Se ha pedido recuperar la contraseña para el usuario: " +us.getNombre()+ ", durante las próximas 24 horas usted puede usar el siguiente código de ingreso: "+clave_prov+  " ; y reestablecer su contraseña. No olvide que en caso de expirar su código, Usted puede volver a solicitar un código de ingreso.");// cuerpo del mensaje 
+                Transport.send(message); //envia el mensaje
                 System.out.println("la fecha que se envio el msm es: "+fechaInicio);
                 System.out.println("mensaje enviado");
                 
